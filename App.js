@@ -1,17 +1,32 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { theme } from "./colors"
+
+const STORAGE_KEY = "@toDos"
 
 export default function App() {
   const [working, setWorking] = useState(true)
   const [text, setText] = useState("")
   const [toDos, setTodos] = useState({})
 
+  useEffect(() => {
+    loadTodo()
+  }, [])
+
   const travel = () => setWorking(false)
   const work = () => setWorking(true)
-
   const onChangeText = (payload) => setText(payload)
+
+  const saveToDos = async (toSave) => {
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
+  }
+
+  const loadTodo = async() => {
+    const s = await AsyncStorage.getItem(STORAGE_KEY)
+    setTodos(JSON.parse(s))
+  }
 
   const addToDo = () => {
     if (text === "") {
@@ -19,9 +34,10 @@ export default function App() {
     }
     // save to do
     // const newToDos = {...toDos, [Date.now()]: {text, work: working} }
-    const newToDos = Object.assign({}, toDos, {[Date.now()]: {text, work: working}
+    const newToDos = Object.assign({}, toDos, {[Date.now()]: {text, working: working}
     })
     setTodos(newToDos)
+    saveToDos(newToDos)
     setText("")
   }
   console.log(toDos)
@@ -46,10 +62,11 @@ export default function App() {
         style={styles.input} 
       />
       <ScrollView>
-        {Object.keys(toDos).map(key => 
-        <View style={styles.toDo} key={key}>
-          <Text style={styles.toDoText}>{toDos[key].text}</Text>
-        </View>)}
+        {Object.keys(toDos).map((key) => 
+         toDos[key].working === working ? <View style={styles.toDo} key={key}>
+            <Text style={styles.toDoText}>{toDos[key].text}</Text>
+        </View> : null
+        )}
       </ScrollView>
     </View>
   );
