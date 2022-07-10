@@ -6,10 +6,25 @@ import { theme } from "./colors"
 export default function App() {
   const [working, setWorking] = useState(true)
   const [text, setText] = useState("")
+  const [toDos, setTodos] = useState({})
+
   const travel = () => setWorking(false)
   const work = () => setWorking(true)
 
   const onChangeText = (payload) => setText(payload)
+
+  const addToDo = () => {
+    if (text === "") {
+      return;
+    }
+    // save to do
+    // const newToDos = {...toDos, [Date.now()]: {text, work: working} }
+    const newToDos = Object.assign({}, toDos, {[Date.now()]: {text, work: working}
+    })
+    setTodos(newToDos)
+    setText("")
+  }
+  console.log(toDos)
 
   return (
     <View style={styles.container}>
@@ -24,7 +39,10 @@ export default function App() {
       </View>
       <TextInput
         onChangeText={onChangeText}
-        placeholder={working ? "Add a To Do" : "where do you want go?"} 
+        onSubmitEditing={addToDo}
+        returnKeyType="done"
+        placeholder={working ? "Add a To Do" : "where do you want go?"}
+        value={text} 
         style={styles.input} 
       />
     </View>
