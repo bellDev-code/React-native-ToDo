@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { theme } from "./colors"
 
 export default function App() {
@@ -45,6 +45,12 @@ export default function App() {
         value={text} 
         style={styles.input} 
       />
+      <ScrollView>
+        {Object.keys(toDos).map(key => 
+        <View style={styles.toDo} key={key}>
+          <Text style={styles.toDoText}>{toDos[key].text}</Text>
+        </View>)}
+      </ScrollView>
     </View>
   );
 }
@@ -66,9 +72,23 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "white",
-    paddingVertical: 10,
+    paddingVertical: 20,
     paddingHorizontal: 20,
     marginTop: 20,
+    marginBottom: 20,
     borderRadius: 20,
+    fontSize: 18
+  },
+  toDo: {
+    backgroundColor: theme.toDoBg,
+    marginBottom: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 15
+  },
+  toDoText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500"
   }
 });
